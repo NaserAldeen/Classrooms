@@ -9,6 +9,8 @@ from .forms import *
 
 def add_student(request, class_id):
     classroom_obj = Classroom.objects.get(id=class_id)
+    if not request.user == classroom_obj.teacher:
+        return redirect("signin")
     form = AddStudentForm()
     if request.method == "POST":
         form = AddStudentForm(request.POST)
@@ -80,13 +82,32 @@ def classroom_update(request, classroom_id):
     }
     return render(request, 'update_classroom.html', context)
 
+def student_update(request, student_id):
+    student = Student.objects.get(id=student_id)
+    form = AddStudentForm(instance=student)
+    if request.method == "POST":
+        form = AddStudentForm(request.POST, request.FILES or None, instance=student)
+        if form.is_valid():
+            form.save()
+            # messages.success(request, "Successfully Edited!")
+            return redirect('classroom-detail',student.classroom.id)
+        print (form.errors)
+    context = {
+    "form": form,
+    "student": student,
+    }
+    return render(request, 'update_student.html', context)
 
 def classroom_delete(request, classroom_id):
     Classroom.objects.get(id=classroom_id).delete()
     messages.success(request, "Successfully Deleted!")
     return redirect('classroom-list')
 
-
+def student_delete(request, student_id):
+    classroom_id = Student.objects.get(id=student_id).classroom.id
+    Student.objects.get(id=student_id).delete()
+    # messages.success(request, "Successfully Deleted!")
+    return redirect('classroom-detail',classroom_id)
 def signup(request):
     form = SignupForm()
     if request.method == 'POST':

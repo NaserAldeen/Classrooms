@@ -16,7 +16,9 @@ urlpatterns = [
     path('signup/',views.signup ,name='signup'),
     path('signin/',views.signin ,name='signin'),
     path('signout/',views.signout ,name='signout'),
-    path('classroom/<int:class_id>/addstudent/', views.add_student, name="add-student")
+    path('classroom/<int:class_id>/addstudent/', views.add_student, name="add-student"),
+    path('classrooms/students/<int:student_id>/update/', views.student_update, name='update-student'),
+    path('classrooms/students/<int:student_id>/delete/', views.student_delete, name='delete-student'),
     # path('noaccess/',views.no_access ,name='no-access'),
 ]
 
